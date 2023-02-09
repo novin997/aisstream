@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,10 @@ import com.project.aisstream.model.AISMessage;
 @Component
 public class AisStreamWebSocket extends WebSocketClient {
     private final static String URL = "wss://stream.aisstream.io/v0/stream";
+
+    @Value("${aisstream.api-key}")
+    private String API_KEY;
+
     private ObjectMapper objectMapper;
     private Long tracksCount;
     private Set<Long> mmsiSet = new HashSet<Long>();
@@ -34,7 +39,7 @@ public class AisStreamWebSocket extends WebSocketClient {
     public void onOpen(ServerHandshake handshakedata) {
         // send subscription message upon connection
         // send("{\"APIKey\":\"<key>\",\"BoundingBoxes\":[[[2.34120,102.116109],[1.214457,104.641903]]]}");
-        send("{\"APIKey\":\"<key>\",\"BoundingBoxes\":[[[-90,-180],[90,180]]]}");
+        send("{\"APIKey\":\"" + API_KEY + "\",\"BoundingBoxes\":[[[-90,-180],[90,180]]]}");
     }
 
     @Scheduled(fixedRate = 60000)
