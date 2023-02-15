@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,10 +18,14 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.aisstream.model.AISMessage;
+import com.project.aisstream.util.JsonWriter;
 
 @Component
 public class AisStreamWebSocket extends WebSocketClient {
     private final static String URL = "wss://stream.aisstream.io/v0/stream";
+
+    @Autowired
+    JsonWriter jsonWriter;
 
     @Value("${aisstream.api-key}")
     private String API_KEY;
@@ -51,11 +56,11 @@ public class AisStreamWebSocket extends WebSocketClient {
     @Override
     public void onMessage(ByteBuffer message) {
         String jsonString = StandardCharsets.UTF_8.decode(message).toString();
+        jsonWriter.appendDataToJson(jsonString);
         this.tracksCount++;
         try {
             AISMessage aisMessage = objectMapper.readValue(jsonString, AISMessage.class);
             mmsiSet.add(aisMessage.getMetaData().getMmsi());
-            // System.out.println(aisMessage.getMetaData().toString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
