@@ -64,7 +64,7 @@ public class AisStreamWebSocket extends WebSocketClient {
         this.tracksCount++;
         try {
             AISMessage aisMessage = objectMapper.readValue(jsonString, AISMessage.class);
-            // System.out.println(aisMessage.toString());
+            System.out.println(aisMessage.toString());
             aisMessageRepository.save(aisMessage);
             mmsiSet.add(aisMessage.getMetaData().getMmsi());
         } catch (JsonProcessingException e) {

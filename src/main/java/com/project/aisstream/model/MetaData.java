@@ -2,8 +2,9 @@ package com.project.aisstream.model;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.project.aisstream.util.DateDeserializer;
 
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class MetaData {
     @JsonProperty("longitude")
     private Double longitude;
 
+    @JsonDeserialize(using = DateDeserializer.class)
     @JsonProperty("time_utc")
-    private String timeUTC;
+    private Date timeUTC;
 }
