@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.aisstream.model.AISMessage;
+import com.project.aisstream.repository.AisMessageRepository;
 import com.project.aisstream.util.JsonWriter;
 
 @Component
@@ -26,6 +27,9 @@ public class AisStreamWebSocket extends WebSocketClient {
 
     @Autowired
     JsonWriter jsonWriter;
+
+    @Autowired
+    AisMessageRepository aisMessageRepository;
 
     @Value("${aisstream.api-key}")
     private String API_KEY;
@@ -60,6 +64,8 @@ public class AisStreamWebSocket extends WebSocketClient {
         this.tracksCount++;
         try {
             AISMessage aisMessage = objectMapper.readValue(jsonString, AISMessage.class);
+            // System.out.println(aisMessage.toString());
+            aisMessageRepository.save(aisMessage);
             mmsiSet.add(aisMessage.getMetaData().getMmsi());
         } catch (JsonProcessingException e) {
             e.printStackTrace();

@@ -11,5 +11,4 @@ public class AisStreamService {
         this.aisStream = aisStream;
         this.aisStream.connect();
     }
-
 }

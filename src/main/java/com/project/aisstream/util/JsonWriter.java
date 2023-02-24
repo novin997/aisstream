@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,9 +26,10 @@ public class JsonWriter {
         this.mapper = new ObjectMapper();
     }
 
-    public void appendDataToJson(String jsonString) {
-
+    @Async("threadPoolTaskExecutor")
+    public synchronized void appendDataToJson(String jsonString) {
         try {
+            System.out.println(Thread.currentThread().getName() + " start");
             FileOutputStream fos = new FileOutputStream(new File(this.fileName), true);
             Object jsonObject = this.mapper.readValue(jsonString, Object.class);
             // String jsonPretty =
@@ -38,6 +40,7 @@ public class JsonWriter {
             fos = new FileOutputStream(new File(this.fileName), true);
             fos.write(',');
             fos.write('\n');
+            System.out.println(Thread.currentThread().getName() + " end");
             // this.mapper.writerWithDefaultPrettyPrinter().writeValue(fos, s);
         } catch (Exception e) {
             e.printStackTrace();
